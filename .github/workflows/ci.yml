@@ -83,14 +83,15 @@ jobs:
       - name: Build and push Docker images
         env:
           DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_BUILDKIT: "0"
         run: |
-          docker build -t ${DOCKER_USER}/student-service:latest ./student-service
-          docker build -t ${DOCKER_USER}/task-service:latest ./task-service
-          docker build -t ${DOCKER_USER}/frontend-service:latest ./frontend-service
-          docker build -t ${DOCKER_USER}/api-gateway:latest ./api-gateway
-          docker build -t ${DOCKER_USER}/eureka-server:latest ./eureka-server
-          docker push ${DOCKER_USER}/student-service:latest
-          docker push ${DOCKER_USER}/task-service:latest
-          docker push ${DOCKER_USER}/frontend-service:latest
-          docker push ${DOCKER_USER}/api-gateway:latest
-          docker push ${DOCKER_USER}/eureka-server:latest
+          docker build -t "${DOCKER_USER}/student-service:latest" ./student-service
+          docker build -t "${DOCKER_USER}/task-service:latest" ./task-service
+          docker build -t "${DOCKER_USER}/frontend-service:latest" ./frontend-service
+          docker build -t "${DOCKER_USER}/api-gateway:latest" ./api-gateway
+          docker build -t "${DOCKER_USER}/eureka-server:latest" ./eureka-server
+          docker push "${DOCKER_USER}/student-service:latest"
+          docker push "${DOCKER_USER}/task-service:latest"
+          docker push "${DOCKER_USER}/frontend-service:latest"
+          docker push "${DOCKER_USER}/api-gateway:latest"
+          docker push "${DOCKER_USER}/eureka-server:latest"
