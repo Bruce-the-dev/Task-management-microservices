@@ -1,5 +1,6 @@
 package com.task.service.service;
 
+import com.task.service.dto.Mapper;
 import com.task.service.dto.StudentResponseDTO;
 import com.task.service.dto.TaskDTO;
 import com.task.service.dto.TaskRequest;
@@ -9,10 +10,10 @@ import com.task.service.feign.StudentClient;
 import com.task.service.model.Task;
 import com.task.service.repository.TaskRepository;
 import feign.FeignException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -31,15 +32,20 @@ class TaskServiceTest {
     @Mock
     private StudentClient studentClient;
 
-
-    @InjectMocks
+//
+//    @InjectMocks
     private TaskService taskService;
 
     // Real mapper — no need to mock it, it has no dependencies
 //    @Spy
-//    private final Mapper mapper = new Mapper();
+    private final Mapper mapper = new Mapper();
 
     // ---- getTaskById ----
+
+    @BeforeEach
+    void setUp() {
+        taskService = new TaskService(taskRepository, studentClient, mapper);
+    }
 
     @Test
     void getTaskById_returnsTaskWithStudent_whenStudentExists() {
