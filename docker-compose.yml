@@ -23,8 +23,7 @@ services:
       retries: 5
 
   eureka-server:
-    build: ./eureka-server
-    image: eureka-server
+    image: bruce04/eureka-server
     ports:
       - "8761:8761"
     depends_on:
@@ -39,8 +38,7 @@ services:
       retries: 10
 
   student-service:
-    build: ./student-service
-    image: student-service
+    image: bruce04/student-service
     ports:
       - "8082:8082"
     environment:
@@ -58,8 +56,7 @@ services:
         condition: service_healthy
 
   task-service:
-    build: ./task-service
-    image: task-service
+    image: bruce04/task-service
     ports:
       - "8083:8083"
     environment:
@@ -77,8 +74,7 @@ services:
         condition: service_healthy
 
   frontend-service:
-    build: ./frontend-service
-    image: frontend-service
+    image: bruce04/frontend-service
     ports:
       - "8081:8081"
     environment:
@@ -93,8 +89,7 @@ services:
         condition: service_started
 
   api-gateway:
-    build: ./api-gateway
-    image: api-gateway
+    image: bruce04/api-gateway
     ports:
       - "8080:8080"
     environment:
