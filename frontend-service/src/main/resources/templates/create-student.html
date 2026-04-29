@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Create Student</title>
+</head>
+<body>
+
+<h1>Create Student</h1>
+<form action="/students/create" method="post">
+    Name: <input type="text" name="name"/><br/>
+    Email: <input type="text" name="email"/><br/>
+    <button type="submit">Create</button>
+</form>
+<a th:href="@{/}">Back to Dashboard</a>
+</body>
+</html>

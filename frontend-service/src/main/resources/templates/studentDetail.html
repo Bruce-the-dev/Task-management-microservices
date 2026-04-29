@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Details</title>
+</head>
+<body>
+<h1>Student Details</h1>
+
+<div>
+    <p><strong>Name:</strong> <span th:text="${student.name}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${student.email}"></span></p>
+</div>
+
+<hr/>
+
+<h2>Tasks Assigned</h2>
+<ul>
+    <li th:each="task : ${tasks}" th:if="${task.studentId == student.id}">
+        <strong th:text="${task.title}"></strong> -
+        <span th:text="${task.description}"></span>
+    </li>
+</ul>
+
+<p th:if="${#lists.isEmpty(tasks.?[studentId == studentId])}">
+    No tasks assigned.
+</p>
+
+<a th:href="@{/}">Back to Dashboard</a>
+</body>
+</html>

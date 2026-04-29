@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Task</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; }
+        .error { color: red; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+
+<h1>Create Task</h1>
+
+<!-- Error message container -->
+<p th:if="${error}" class="error" th:text="${error}"></p>
+
+<form action="#" th:action="@{/tasks/create}" th:object="${task}" method="post">
+    Title: <input type="text" th:field="*{title}" required/><br/><br/>
+    Description: <input type="text" th:field="*{description}" required/><br/><br/>
+    Course ID: <input type="text" th:field="*{courseId}" required/><br/><br/>
+    Student:
+    <select th:field="*{studentId}">
+        <option value="">-- Select Student --</option>
+        <option th:each="student : ${students}" th:value="${student.id}" th:text="${student.name}"></option>
+    </select><br/><br/>
+
+    <button type="submit">Create</button>
+</form>
+
+<a th:href="@{/}">Back to Dashboard</a>
+
+</body>
+</html>

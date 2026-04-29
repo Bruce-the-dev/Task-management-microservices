@@ -1,0 +1,117 @@
+services:
+  taskapp-mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  taskapp-rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  eureka-server:
+    build: ./eureka-server
+    image: eureka-server
+    ports:
+      - "8761:8761"
+    depends_on:
+      taskapp-mongodb:
+        condition: service_healthy
+      taskapp-rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: curl -f http://localhost:8761/actuator/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  student-service:
+    build: ./student-service
+    image: student-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://taskapp-mongodb:27017/studentdb
+      - SPRING_MONGODB_URI=mongodb://taskapp-mongodb:27017/studentdb
+      - SPRING_RABBITMQ_HOST=taskapp-rabbitmq
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - MANAGEMENT_TRACING_EXPORT_ZIPKIN_ENDPOINT=http://taskapp-zipkin:9411/api/v2/spans
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      taskapp-mongodb:
+        condition: service_healthy
+      taskapp-rabbitmq:
+        condition: service_healthy
+
+  task-service:
+    build: ./task-service
+    image: task-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://taskapp-mongodb:27017/taskdb
+      - SPRING_MONGODB_URI=mongodb://taskapp-mongodb:27017/taskdb
+      - SPRING_RABBITMQ_HOST=taskapp-rabbitmq
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - MANAGEMENT_TRACING_EXPORT_ZIPKIN_ENDPOINT=http://taskapp-zipkin:9411/api/v2/spans
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      taskapp-mongodb:
+        condition: service_healthy
+      taskapp-rabbitmq:
+        condition: service_healthy
+
+  frontend-service:
+    build: ./frontend-service
+    image: frontend-service
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - MANAGEMENT_TRACING_EXPORT_ZIPKIN_ENDPOINT=http://taskapp-zipkin:9411/api/v2/spans
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      task-service:
+        condition: service_started
+      student-service:
+        condition: service_started
+
+  api-gateway:
+    build: ./api-gateway
+    image: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - MANAGEMENT_TRACING_EXPORT_ZIPKIN_ENDPOINT=http://taskapp-zipkin:9411/api/v2/spans
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      task-service:
+        condition: service_started
+      student-service:
+        condition: service_started
+
+  taskapp-zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+
+volumes:
+  mongo-data:

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Student</title>
+    <style>
+        /* ---------- Page Layout ---------- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 25px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        /* ---------- Headings ---------- */
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #444;
+        }
+
+        /* ---------- Form Elements ---------- */
+        form label {
+            display: block;
+            margin: 12px 0 6px;
+            font-weight: 600;
+        }
+
+        form input[type="text"],
+        form input[type="email"] {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 18px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        /* ---------- Buttons ---------- */
+        form button {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        form button:hover {
+            background-color: #0056b3;
+        }
+
+        a.button {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+        a.button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Edit Student</h1>
+
+    <!-- Error message container -->
+    <p th:if="${error}" class="error" th:text="${error}"></p>
+
+    <form th:action="@{'/students/update/' + ${student.id}}" method="post">
+        <input type="hidden" name="id" th:value="${student.id}"/>
+
+        <div>
+            <label>Name:</label>
+            <input type="text" name="name" th:value="${student.name}" required/>
+        </div>
+
+        <div>
+            <label>Email:</label>
+            <input type="email" name="email" th:value="${student.email}" required/>
+        </div>
+
+        <!-- Flex container for Update + Delete buttons -->
+        <div style="display:flex; justify-content: space-between; align-items:center;">
+            <button type="submit">Update Student</button>
+
+            <a th:href="@{/students/delete/{id}(id=${student.id})}"
+               class="button"
+               style="background-color:#dc3545; color:#fff; padding:10px 18px; border-radius:5px; text-decoration:none;"
+               onclick="return confirm('Are you sure you want to delete this student?');">
+                Delete Student
+            </a>
+        </div>
+    </form>
+</div>
+
+<br/>
+<a th:href="@{/}">Back to Dashboard</a>
+
+</body>
+</html>
