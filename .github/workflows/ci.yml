@@ -81,15 +81,16 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker images
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/student-service:latest ./student-service
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/task-service:latest ./task-service
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/frontend-service:latest ./frontend-service
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/api-gateway:latest ./api-gateway
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/eureka-server:latest ./eureka-server
-
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/student-service:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/task-service:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/frontend-service:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/api-gateway:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/eureka-server:latest
+          docker build -t ${DOCKER_USER}/student-service:latest ./student-service
+          docker build -t ${DOCKER_USER}/task-service:latest ./task-service
+          docker build -t ${DOCKER_USER}/frontend-service:latest ./frontend-service
+          docker build -t ${DOCKER_USER}/api-gateway:latest ./api-gateway
+          docker build -t ${DOCKER_USER}/eureka-server:latest ./eureka-server
+          docker push ${DOCKER_USER}/student-service:latest
+          docker push ${DOCKER_USER}/task-service:latest
+          docker push ${DOCKER_USER}/frontend-service:latest
+          docker push ${DOCKER_USER}/api-gateway:latest
+          docker push ${DOCKER_USER}/eureka-server:latest
